@@ -1,0 +1,7 @@
+flask
+Flask-WTF
+pymongo
+gunicorn
+tushare
+pandas
+numpy
