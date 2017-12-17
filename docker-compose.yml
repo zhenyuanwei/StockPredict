@@ -3,8 +3,6 @@ web:
   build: ./app
   expose:
     - "5000"
-  links:
-    - mongodb:mongodb
   volumes:
     - .:/app
   env_file: .env
@@ -23,14 +21,6 @@ nginx:
     - web
   links:
     - web:web
-
-mongodb:
-  restart: always
-  image: mongo:latest
-  ports:
-    - "27017:27017"
-  volumes:
-    - /Users/weizhenyuan/mongo/data/db:/data/db
 
 
 
