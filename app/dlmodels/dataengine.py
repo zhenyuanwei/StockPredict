@@ -17,12 +17,14 @@ def convert_dataset(data, n_input=1, n_out=1, dropnan=True):
         cols.append(df.shift(i))
         names += [('var%d(t-%d)' % (j + 1, i)) for j in range(n_vars)]
     # 输出结果 (t)
-    for i in range(0, n_out):
-        cols.append(df.shift(-i))
-        if i == 0:
-            names += [('var%d(t)' % (j + 1)) for j in range(n_vars)]
-        else:
-            names += [('var%d(t+%d)' % (j + 1, i)) for j in range(n_vars)]
+    if n_out != 0:
+        for i in range(0, n_out):
+            cols.append(df.shift(-i))
+            if i == 0:
+                names += [('var%d(t)' % (j + 1)) for j in range(n_vars)]
+            else:
+                names += [('var%d(t+%d)' % (j + 1, i)) for j in range(n_vars)]
+
     # 合并输入输出序列
     result = concat(cols, axis=1)
     result.columns = names
