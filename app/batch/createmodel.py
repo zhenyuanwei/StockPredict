@@ -8,4 +8,4 @@ if __name__ == '__main__':
     data = getHistoryData(start=start, end=end, code=code)
     data = convert_dataset(data, n_input=timestep, n_out=days)
     train(data=data, code=code)
-    result = predict(data, code=code)
+    # result = predict(data, code=code)

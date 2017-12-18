@@ -43,8 +43,8 @@ class StockModel(nn.Module):
         out = self.linear2(out)
         return out
 
-def train(data, code='000001'):
-    model_file = 'model_' + code + '.ptm'
+def train(data, code='000001', folder='../dlmodels'):
+    model_file = folder + '/' + 'model_' + code + '.ptm'
     model = StockModel()
     dataset = createTensorDataset(data)
 
@@ -73,12 +73,17 @@ def train(data, code='000001'):
 
     save_model(model, model_file)
 
-def predict(data, code='000001'):
-    model_file = 'model_' + code + '.ptm'
+def format_outputs(outputs):
+    outputs = np.reshape(outputs, (feature, days))
+    return outputs
+
+def predict(data, code='000001', folder='../dlmodels'):
+    model_file = folder + '/' + 'model_' + code + '.ptm'
+
     model = load_model(model_file)
     model.eval()
     dataset = torch.FloatTensor(data)
     x = Variable(dataset)
     outputs = model(x)
     outputs = outputs.data.numpy()
-    return outputs
+    return format_outputs(outputs)
