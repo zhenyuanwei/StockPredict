@@ -6,6 +6,7 @@ from torch import optim
 from torch.utils.data import DataLoader, TensorDataset
 import numpy as np
 import torch
+from pandas import DataFrame
 
 feature = 5
 timestep = 20
@@ -75,7 +76,9 @@ def train(data, code='000001', folder='../dlmodels'):
 
 def format_outputs(outputs):
     outputs = np.reshape(outputs, (feature, days))
-    return outputs
+    df = DataFrame(outputs)
+    df.columns = ['open', 'close', 'high', 'low', 'volume']
+    return df
 
 def predict(data, code='000001', folder='../dlmodels'):
     model_file = folder + '/' + 'model_' + code + '.ptm'
