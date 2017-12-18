@@ -21,12 +21,11 @@ def createTensorDataset(data):
     scaler = MinMaxScaler()
     values = scaler.fit_transform(values)
 
-    x = values[:, : feature * timestep - 1]
+    x = values[:, : feature * timestep]
     x = torch.FloatTensor(x)
 
     y = values[:, feature * timestep :]
-    y = np.reshape(y, (y.shape[0], 1)).astype('float32')
-    y = torch.from_numpy(y)
+    y = torch.FloatTensor(y)
 
     dataset = TensorDataset(data_tensor=x, target_tensor=y)
     return dataset
