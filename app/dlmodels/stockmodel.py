@@ -7,6 +7,7 @@ from torch.utils.data import DataLoader, TensorDataset
 import numpy as np
 import torch
 from pandas import DataFrame
+from sklearn.preprocessing import MinMaxScaler
 
 feature = 5
 timestep = 20
@@ -16,6 +17,10 @@ epochs = 200
 
 def createTensorDataset(data):
     values = data.values
+    # MinMax Data
+    scaler = MinMaxScaler()
+    values = scaler.fit_transform(values)
+
     x = values[:, : feature * timestep - 1]
     x = torch.FloatTensor(x)
 
