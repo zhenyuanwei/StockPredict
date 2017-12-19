@@ -8,6 +8,7 @@ import numpy as np
 import torch
 from pandas import DataFrame
 from sklearn.preprocessing import MinMaxScaler
+from app.dlmodels.dataengine import getHistoryData, convert_dataset
 
 feature = 5
 timestep = 20
@@ -15,11 +16,20 @@ days = 5
 batch_size = 64
 epochs = 200
 
-def createTensorDataset(data):
+def make_scaler(start='2000-01-01', end='2017-12-15', code='000001', out_days=5):
+    scaler = MinMaxScaler()
+    data = getHistoryData(start=start, end=end, code=code)
+    data = convert_dataset(data, n_input=timestep, n_out=out_days)
+    scaler.fit(data)
+    return scaler
+
+def createTensorDataset(data, out_days=5):
     values = data.values
     # MinMax Data
-    scaler = MinMaxScaler()
-    values = scaler.fit_transform(values)
+    #scaler = MinMaxScaler()
+    #values = scaler.fit_transform(values)
+    scaler = make_scaler(out_days=out_days)
+    values = scaler.transform(values)
 
     x = values[:, : feature * timestep]
     x = torch.FloatTensor(x)
@@ -93,4 +103,9 @@ def predict(data, code='000001', folder='../dlmodels'):
     x = Variable(dataset)
     outputs = model(x)
     outputs = outputs.data.numpy()
+    tmpvalues = np.append(data, outputs)
+    scaler = make_scaler(code=code)
+    tmpvalues = scaler.inverse_transform(np.reshape(tmpvalues, (1, tmpvalues.shape[0])))
+    tmpvalues = tmpvalues[0]
+    outputs = tmpvalues[feature * timestep: ]
     return format_outputs(outputs)

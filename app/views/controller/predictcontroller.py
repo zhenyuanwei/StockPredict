@@ -1,7 +1,6 @@
-from app.dlmodels.stockmodel import predict, timestep, feature, days
+from app.dlmodels.stockmodel import predict, timestep, feature, make_scaler
 from app.dlmodels.dataengine import getHistoryData, convert_dataset
 import time
-from sklearn.preprocessing import MinMaxScaler
 
 def getToday():
     today = time.localtime()
@@ -12,22 +11,20 @@ def getData(end, code='000001'):
     data = getHistoryData(end=end, code=code)
     data = convert_dataset(data, n_input=timestep, n_out=1)
     data = data.values
+
+    scaler = make_scaler(out_days=1)
+    data = scaler.transform(data)
+
     data = data[-1:, feature:]
     return data
-
-def inverse(values, code='000001'):
-    data = getHistoryData(code=code)
-    data = convert_dataset(data, n_input=timestep, n_out=days)
-    scaler = MinMaxScaler().fit(data)
-    results = scaler.inverse_transform(values)
-    return results
 
 def predictValue(code='000001'):
     today = getToday()
     data = getData(end=today, code=code)
-    results = predict(data, code=code)
-    results = inverse(results, code=code)
+
+    results = predict(data, code=code, folder='../../dlmodels')
     return results
 
 if __name__ == '__main__':
     results = predictValue()
+    print(results)
